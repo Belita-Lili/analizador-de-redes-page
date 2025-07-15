@@ -3,553 +3,517 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Analizador de Redes Simulado</title>
-  <link rel="stylesheet" href="Styles/styles.css">
+  <title>Simulador de Analizador de Redes</title>
   <style>
-    .dropdown-menu {
-      display: none;
-      list-style: none;
-      padding-left: 20px;
-      margin: 5px 0;
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
     }
-    .dropdown-menu.show {
-      display: block;
+
+    .main-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      overflow: hidden;
     }
-    .dropdown-item {
+
+    .tabs {
+      display: flex;
+      background-color: #3498db;
+    }
+
+    .tab {
+      padding: 15px 20px;
+      color: white;
       cursor: pointer;
-      padding: 5px 0;
+      background-color: #2980b9;
+      border-right: 1px solid #1a6ea0;
+      flex: 1;
+      text-align: center;
     }
-    .dropdown-item:hover {
-      color: #4CAF50;
+
+    .tab.active {
+      background-color: #3498db;
+      font-weight: bold;
     }
-    
-    .full-analyzer-view {
-      display: none;
-    }
-    .full-analyzer-view.show {
-      display: block;
-    }
-    .full-analyzer-conexion-view {
-      display: none;
-    }
+
     .tab-content {
       display: none;
+      padding: 20px;
     }
+
     .tab-content.active {
       display: block;
     }
-    .chart-container {
+
+    /* Estilos para la pestaña de funcionamiento */
+    .operation-container {
+      position: relative;
+      width: 400px;
+      margin: auto;
+      margin-top: 20px;
+    }
+
+    .info-box {
+      margin-top: 20px;
+      background-color: #ecf0f1;
+      padding: 10px;
+      border-left: 5px solid #3498db;
+      font-size: 0.9em;
+      height: auto;
+      min-height: 50px;
+    }
+
+    .background {
+      width: 100%;
+      display: block;
+    }
+
+    .btn {
+      position: absolute;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      color: white;
+    }
+
+    /* Posiciones botones (igual que tu diseño original) */
+    .f1 { top: 225px; left: 130px; width: 20px; height: 10px; }
+    .f2 { top: 225px; left: 160px; width: 20px; height: 10px; }
+    .f3 { top: 225px; left: 190px; width: 20px; height: 10px; }
+    .f4 { top: 225px; left: 220px; width: 20px; height: 10px; }
+    .f5 { top: 225px; left: 250px; width: 20px; height: 10px; }
+    .f6 { top: 225px; left: 280px; width: 20px; height: 10px; }
+
+    .confirm { top: 250px; left: 280px; width: 20px; height: 20px; }
+    .return  { top: 250px; left: 220px; width: 20px; height: 20px; }
+    .ask     { top: 310px; left: 220px; width: 20px; height: 20px; }
+    .close   { top: 310px; left: 280px; width: 20px; height: 20px; }
+
+    .up    { top: 270px; left: 245px; width: 30px; height: 10px; }
+    .down  { top: 300px; left: 245px; width: 30px; height: 10px; }
+    .left  { top: 280px; left: 225px; width: 10px; height: 20px; }
+    .right { top: 280px; left: 280px; width: 10px; height: 20px; }
+
+    .num1 { top: 250px; left: 130px; width: 20px; height: 15px; }
+    .num2 { top: 250px; left: 160px; width: 20px; height: 15px; }
+    .num3 { top: 275px; left: 130px; width: 20px; height: 15px; }
+    .num4 { top: 275px; left: 160px; width: 20px; height: 15px; }
+    .num5 { top: 295px; left: 130px; width: 20px; height: 15px; }
+    .num6 { top: 295px; left: 160px; width: 20px; height: 15px; }
+    .num7 { top: 315px; left: 130px; width: 20px; height: 15px; }
+    .num8 { top: 315px; left: 160px; width: 20px; height: 15px; }
+
+    /* Estilos para botones (igual que tu diseño original) */
+    .func-btn {
+      background-color: #3498db;
+      font-size: 0.7em;
+      font-weight: bold;
+    }
+
+    .func-btn:hover {
+      background-color: #2980b9;
+    }
+
+    .nav-btn {
+      background-color: #e74c3c;
+      font-size: 0.8em;
+    }
+
+    .nav-btn:hover {
+      background-color: #c0392b;
+    }
+
+    .btn[class*="num"] {
+      font-size: 0.9em;
+      font-weight: bold;
+      background-color: #95a5a6;
+    }
+
+    .btn[class*="num"]:hover {
+      background-color: #7f8c8d;
+    }
+
+    /* Estilos para la pestaña de conexión */
+    .connection-container {
+      position: relative;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .connection-image {
+      width: 100%;
+      max-width: 600px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .connection-buttons {
+      position: absolute;
+      right: 50px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .connection-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .connection-btn:hover {
+      background-color: #2980b9;
+    }
+
+    /* Estilos para la pestaña de simulación */
+    .simulation-container {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .simulation-screen {
+      background-color: #000;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      padding: 15px;
+      border-radius: 5px;
+      height: 300px;
+      overflow: auto;
+      position: relative;
+    }
+
+    .waveform {
+      position: relative;
+      height: 150px;
+      margin-top: 20px;
+      background-color: #111;
+      overflow: hidden;
+    }
+
+    .wave {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    .voltage-wave {
+      stroke: #f00;
+    }
+
+    .current-wave {
+      stroke: #0ff;
+      opacity: 0.7;
+    }
+
+    .measurement-values {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .measurement-card {
+      background-color: #222;
+      padding: 10px;
+      border-radius: 5px;
+      color: #fff;
+    }
+
+    .measurement-value {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #0f0;
+    }
+
+    .measurement-label {
+      font-size: 0.8em;
+      color: #aaa;
+    }
+
+    .simulation-controls {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .simulation-btn {
+      padding: 8px 15px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .simulation-btn:hover {
+      background-color: #2980b9;
+    }
+
+    /* Estilos para el modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      max-width: 500px;
       width: 80%;
-      margin: 20px auto;
+      position: relative;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #e74c3c;
+    }
+
+    @media (max-width: 768px) {
+      .operation-container {
+        width: 95%;
+      }
+      
+      .connection-buttons {
+        right: 10px;
+      }
+      
+      .connection-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8em;
+      }
+
+      .measurement-values {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="logo">Network Analyzer Pro</div>
-    </header>
-    <div class="sidebar">
-      <div class="nav-item active" id="dashboard-nav">Dashboard</div>
-      <div class="nav-item" id="traffic-nav">Análisis de Tráfico</div>
-      <div class="nav-item" id="dispositivos-nav">Dispositivos</div>
-      <div class="nav-item">Configuración</div>
-      <div class="nav-item" id="analyzer-main-nav">Analizador de Redes</div>
-      <ul class="dropdown-menu" id="analyzer-dropdown">
-        <li><a class="dropdown-item" id="instructivo-nav">Instructivo</a></li>
-        <li><a class="dropdown-item" id="conexion-nav">Conexion</a></li>
-        <li><a class="dropdown-item" id="simulador-nav">Simulador</a></li>
-      </ul>
-      <div class="nav-item">Ayuda</div>
-      <div class="form-group">
-        <label for="ip-range">Rango de IP</label>
-        <input type="text" id="ip-range" placeholder="Ej: 192.168.1.1-100">
-      </div>
-      <div class="form-group">
-        <label for="port-range">Rango de Puertos</label>
-        <input type="text" id="port-range" placeholder="Ej: 80-443">
-      </div>
-      <div class="form-group">
-        <label for="protocol">Protocolo</label>
-        <select id="protocol">
-          <option value="tcp">TCP</option>
-          <option value="udp">UDP</option>
-          <option value="icmp">ICMP</option>
-          <option value="all">Todos</option>
-        </select>
-      </div>
-      <button id="start-analysis" class="tooltip">
-        Iniciar Análisis
-        <span class="tooltiptext">Haz clic para comenzar el análisis de red con los parámetros configurados</span>
-      </button>
-      <button id="stop-analysis" class="tooltip">
-        Detener Análisis
-        <span class="tooltiptext">Detiene el análisis en curso</span>
-      </button>
+  <div class="main-container">
+    <!-- Pestañas -->
+    <div class="tabs">
+      <div class="tab active" onclick="openTab('operation')">Funcionamiento</div>
+      <div class="tab" onclick="openTab('connection')">Conexión</div>
+      <div class="tab" onclick="openTab('simulation')">Simulación</div>
     </div>
-    <div class="main-content">
-      <div class="control-panel">
-        <button id="traffic-btn" class="tooltip">Tráfico<span class="tooltiptext">Estadísticas de tráfico</span></button>
-        <button id="devices-btn" class="tooltip">Dispositivos<span class="tooltiptext">Lista de dispositivos</span></button>
-        <button id="ports-btn" class="tooltip">Puertos<span class="tooltiptext">Puertos abiertos</span></button>
-        <button id="alerts-btn" class="tooltip">Alertas<span class="tooltiptext">Alertas de seguridad</span></button>
-        <button id="export-btn" class="tooltip">Exportar<span class="tooltiptext">Exportar resultados</span></button>
-        <button id="help-btn" class="tooltip">Ayuda<span class="tooltiptext">Ayuda</span></button>
+
+    <!-- Contenido de pestaña de Funcionamiento -->
+    <div id="operation" class="tab-content active">
+      <div class="operation-container">
+        <img src="Imagenes/Analizador-PFrontal.png" alt="Panel del analizador" class="background" />
+
+        <!-- Botones funcionales -->
+        <button class="btn func-btn f1" onclick="showStep('F1 - Configurar medición: Selecciona el tipo de red (monofásica, trifásica).')">F1</button>
+        <button class="btn func-btn f2" onclick="showStep('F2 - Elegir parámetros: Selecciona qué parámetros deseas ver (voltaje, corriente, potencia, armónicos).')">F2</button>
+        <button class="btn func-btn f3" onclick="showStep('F3 - Establecer escala: Ajusta el rango de medida para mejor resolución.')">F3</button>
+        <button class="btn func-btn f4" onclick="showStep('F4 - Guardar configuración: Almacena los parámetros seleccionados.')">F4</button>
+        <button class="btn func-btn f5" onclick="showStep('F5 - Conexión: Verifica que las pinzas y sondas estén correctamente conectadas.')">F5</button>
+        <button class="btn func-btn f6" onclick="showStep('F6 - Iniciar medición: Comienza a registrar los valores eléctricos.')">F6</button>
+
+        <!-- Navegación -->
+        <button class="btn nav-btn confirm" onclick="showStep('Confirmar: Acepta y guarda las configuraciones.')">✔</button>
+        <button class="btn nav-btn return" onclick="showStep('Volver: Regresa a la pantalla anterior.')">↩</button>
+        <button class="btn nav-btn ask" onclick="showStep('Ayuda: Muestra información sobre cómo usar el equipo.')">?</button>
+        <button class="btn nav-btn close" onclick="showStep('Cerrar: Finaliza la operación y apaga el equipo.')">✖</button>
+
+        <button class="btn nav-btn up" onclick="showStep('Subir: Navega hacia arriba entre opciones del menú.')">▲</button>
+        <button class="btn nav-btn down" onclick="showStep('Bajar: Navega hacia abajo entre opciones del menú.')">▼</button>
+        <button class="btn nav-btn left" onclick="showStep('Izquierda: Mueve el cursor o cambia de página.')">◀</button>
+        <button class="btn nav-btn right" onclick="showStep('Derecha: Mueve el cursor o cambia de página.')">▶</button>
+
+        <!-- Números -->
+        <button class="btn num1" onclick="showStep('Número 1: Usado para ingresar datos o navegar.')">1</button>
+        <button class="btn num2" onclick="showStep('Número 2: Usado para ingresar datos o navegar.')">2</button>
+        <button class="btn num3" onclick="showStep('Número 3: Usado para ingresar datos o navegar.')">3</button>
+        <button class="btn num4" onclick="showStep('Número 4: Usado para ingresar datos o navegar.')">4</button>
+        <button class="btn num5" onclick="showStep('Número 5: Usado para ingresar datos o navegar.')">5</button>
+        <button class="btn num6" onclick="showStep('Número 6: Usado para ingresar datos o navegar.')">6</button>
+        <button class="btn num7" onclick="showStep('Número 7: Usado para ingresar datos o navegar.')">7</button>
+        <button class="btn num8" onclick="showStep('Número 8: Usado para ingresar datos o navegar.')">8</button>
+
+        <!-- Ventana de información -->
+        <div id="infoBox" class="info-box">Haz clic en un botón para ver su función.</div>
       </div>
+    </div>
 
-      <!-- Contenido del Dashboard -->
-      <div id="dashboard-tab" class="tab-content active">
-        <div class="dashboard-grid">
-          <div class="card traffic-card">
-            <h3>Tráfico de Red</h3>
-            <p id="traffic-usage">120 Mbps</p>
-            <small>Uso actual de red</small>
-          </div>
-          <div class="card devices-card">
-            <h3>Dispositivos</h3>
-            <p id="device-count">8</p>
-            <small>Dispositivos activos</small>
-          </div>
-          <div class="card alerts-card">
-            <h3>Alertas</h3>
-            <p id="alert-count">2</p>
-            <small>Amenazas detectadas</small>
-          </div>
-        </div>
-        <div class="graph-container">
-          <canvas id="network-graph" class="graph"></canvas>
-        </div>
-      </div>
-
-      <!-- Contenido del Análisis de Tráfico -->
-      <div id="traffic-tab" class="tab-content">
-        <h2>Análisis de Coordenadas Eléctricas</h2>
-        <div class="chart-container">
-          <canvas id="traffic-chart"></canvas>
-        </div>
-        <div class="traffic-stats">
-          <div class="stat-item">
-            <h3>Impedancia</h3>
-            <p id="impedance-value">50 Ω</p>
-          </div>
-          <div class="stat-item">
-            <h3>ROE (Relación de Onda Estacionaria)</h3>
-            <p id="roe-value">1.5:1</p>
-          </div>
-          <div class="stat-item">
-            <h3>Pérdidas de Retorno</h3>
-            <p id="return-loss-value">-14 dB</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Contenedores del Analizador -->
-      <div id="analyzer-container" class="tab-content">
-        <h2>Panel del Analizador de Redes</h2>
-        <div class="analyzer-controls">
-          <div class="analyzer">
-            <img src="Imagenes/Analizador-PFrontal.png" alt="Analizador" class="background" />
-            <div class="screen" id="screen">Pantalla inicial</div>
-            <button id="f1" class="btn f1"></button>
-            <button id="f2" class="btn f2"></button>
-            <button id="f3" class="btn f3"></button>
-            <button id="f4" class="btn f4"></button>
-            <button id="f5" class="btn f5"></button>
-            <button id="f6" class="btn f6"></button>
-            <button id="confirm" class="btn confirm"></button>
-            <button id="return" class="btn return"></button>
-            <button id="ask" class="btn ask"></button>
-            <button id="close" class="btn close"></button>
-            <button id="up" class="btn up"></button>
-            <button id="down" class="btn down"></button>
-            <button id="left" class="btn left"></button>
-            <button id="right" class="btn right"></button>
-            <button id="num1" class="btn num1">1</button>
-            <button id="num2" class="btn num2">2</button>
-            <button id="num3" class="btn num3">3</button>
-            <button id="num4" class="btn num4">4</button>
-            <button id="num5" class="btn num5">5</button>
-            <button id="num6" class="btn num6">6</button>
-            <button id="num7" class="btn num7">7</button>
-            <button id="num8" class="btn num8">8</button>
-          </div>
-          <script>
-    // Función para mostrar información en el modal
-    function showButtonInfo(title, content) {
-      console.log(title + ": " + content); // Solo para demostración
-      // En una implementación real, mostrarías esto en un modal en pantalla
-    }
-
-    // Esperar a que el DOM esté completamente cargado
-    document.addEventListener('DOMContentLoaded', function() {
-      // Botones de función
-      document.getElementById("f1").addEventListener("click", function() {
-        document.getElementById("screen").innerText = "F1 Presionado";
-      });
-      document.getElementById("f2").addEventListener("click", function() {
-        document.getElementById("screen").innerText = "F2 Presionado";
-      });
-      document.getElementById("f3").addEventListener("click", function() {
-        document.getElementById("screen").innerText = "F3 Presionado";
-      });
-      document.getElementById("f4").addEventListener("click", function() {
-        document.getElementById("screen").innerText = "F4 Presionado";
-      });
-      document.getElementById("f5").addEventListener("click", function() {
-        document.getElementById("screen").innerText = "F5 Presionado";
-      });
-
-      // Botón confirmar
-      document.getElementById("confirm").addEventListener("click", function() {
-        // Simulación de cambio de pantalla - reemplaza con tus imágenes reales
-        document.getElementById("screen").innerHTML = "<div style='padding:10px'>Configuración confirmada</div>";
-        showButtonInfo("Confirmar", "Este botón confirma la configuración actual del analizador de redes.");
-      });
-
-      // Botón regresar
-      document.getElementById("return").addEventListener("click", function() {
-        document.getElementById("screen").innerHTML = "<div style='padding:10px'>Volviendo al menú anterior</div>";
-      });
-
-      // Botón preguntas
-      document.getElementById("ask").addEventListener("click", function() {
-        document.getElementById("screen").innerHTML = "<div style='padding:10px'>Menú de ayuda</div>";
-      });
-
-      // Botón apagar/encender
-      document.getElementById("close").addEventListener("click", function() {
-        document.getElementById("screen").innerHTML = "<div style='padding:10px'>¿Desea apagar el dispositivo?</div>";
-      });
-
-      // Flechas
-      document.getElementById("up").addEventListener("click", function() {
-        document.getElementById("screen").innerText = "Navegación: Arriba";
-      });
-      document.getElementById("down").addEventListener("click", function() {
-        document.getElementById("screen").innerText = "Navegación: Abajo";
-      });
-      document.getElementById("left").addEventListener("click", function() {
-        document.getElementById("screen").innerText = "Navegación: Izquierda";
-      });
-      document.getElementById("right").addEventListener("click", function() {
-        document.getElementById("screen").innerText = "Navegación: Derecha";
-      });
-
-      // Calculadora numérica
-      let currentCalc = "";
-      document.getElementById("num1").addEventListener("click", function() {
-        currentCalc += "1";
-        document.getElementById("screen").innerText = currentCalc;
-      });
-      document.getElementById("num2").addEventListener("click", function() {
-        currentCalc += "2";
-        document.getElementById("screen").innerText = currentCalc;
-      });
-      document.getElementById("num3").addEventListener("click", function() {
-        currentCalc += "3";
-        document.getElementById("screen").innerText = currentCalc;
-      });
-      document.getElementById("num4").addEventListener("click", function() {
-        currentCalc += "4";
-        document.getElementById("screen").innerText = currentCalc;
-      });
-      document.getElementById("num5").addEventListener("click", function() {
-        currentCalc += "5";
-        document.getElementById("screen").innerText = currentCalc;
-      });
-      document.getElementById("num6").addEventListener("click", function() {
-        currentCalc += "6";
-        document.getElementById("screen").innerText = currentCalc;
-      });
-      document.getElementById("num7").addEventListener("click", function() {
-        currentCalc += "7";
-        document.getElementById("screen").innerText = currentCalc;
-      });
-      document.getElementById("num8").addEventListener("click", function() {
-        currentCalc += "8";
-        document.getElementById("screen").innerText = currentCalc;
-      });
-    });
-  </script>
-        </div>
-      </div>
-
-      <!-- Contenedor del analizador en vista completa (solo imagen) -->
-      <div id="full-analyzer" class="full-analyzer-view">
-        <div class="analyzer">
-          <img src="Imagenes/Analizador-PFrontal.png" alt="Analizador" class="background" />
-          <div class="screen" id="full-screen">Pantalla inicial</div>
-          <button id="full-f1" class="btn f1"></button>
-          <button id="full-f2" class="btn f2"></button>
-          <button id="full-f3" class="btn f3"></button>
-          <button id="full-f4" class="btn f4"></button>
-          <button id="full-f5" class="btn f5"></button>
-          <button id="full-f6" class="btn f6"></button>
-          <button id="full-confirm" class="btn confirm"></button>
-          <button id="full-return" class="btn return"></button>
-          <button id="full-ask" class="btn ask"></button>
-          <button id="full-close" class="btn close"></button>
-          <button id="full-up" class="btn up"></button>
-          <button id="full-down" class="btn down"></button>
-          <button id="full-left" class="btn left"></button>
-          <button id="full-right" class="btn right"></button>
-          <button id="full-num1" class="btn num1">1</button>
-          <button id="full-num2" class="btn num2">2</button>
-          <button id="full-num3" class="btn num3">3</button>
-          <button id="full-num4" class="btn num4">4</button>
-          <button id="full-num5" class="btn num5">5</button>
-          <button id="full-num6" class="btn num6">6</button>
-          <button id="full-num7" class="btn num7">7</button>
-          <button id="full-num8" class="btn num8">8</button>
-        </div>
-      </div>
-      <!-- Contenedor de la conexion del analizador (solo imagen) -->
-      <div id="full-analyzer-conexion" class="full-analyzer-view">
-        <div class="analyzer">
-          <img src="Imagenes/Conexion.png" alt="Analizador" class="background" />
+    <!-- Contenido de pestaña de Conexión -->
+    <div id="connection" class="tab-content">
+      <div class="connection-container">
+        <img src="Imagenes/Conexion.png" alt="Diagrama de conexión" class="connection-image">
+        
+        <div class="connection-buttons">
+          <button class="connection-btn" onclick="openModal(1)">1</button>
+          <button class="connection-btn" onclick="openModal(2)">2</button>
+          <button class="connection-btn" onclick="openModal(3)">3</button>
+          <button class="connection-btn" onclick="openModal(4)">4</button>
+          <button class="connection-btn" onclick="openModal(5)">5</button>
+          <button class="connection-btn" onclick="openModal(6)">6</button>
+          <button class="connection-btn" onclick="openModal(7)">7</button>
         </div>
       </div>
     </div>
+
+    <!-- Contenido de pestaña de Simulación -->
+    <div id="simulation" class="tab-content">
+      <div class="simulation-container">
+        <div class="simulation-screen">
+          <h3 style="color: #0f0; margin-top: 0;">ANALIZADOR DE REDES - MEDICIÓN ACTIVA</h3>
+          <div class="waveform">
+            <svg class="wave" viewBox="0 0 500 150" preserveAspectRatio="none">
+              <path id="voltage-wave" class="voltage-wave" fill="none" stroke-width="2" d=""></path>
+              <path id="current-wave" class="current-wave" fill="none" stroke-width="2" d=""></path>
+            </svg>
+          </div>
+          
+          <div class="measurement-values">
+            <div class="measurement-card">
+              <div class="measurement-value" id="voltage-value">230.5 V</div>
+              <div class="measurement-label">Voltaje RMS</div>
+            </div>
+            <div class="measurement-card">
+              <div class="measurement-value" id="current-value">15.2 A</div>
+              <div class="measurement-label">Corriente RMS</div>
+            </div>
+            <div class="measurement-card">
+              <div class="measurement-value" id="power-value">3.5 kW</div>
+              <div class="measurement-label">Potencia Activa</div>
+            </div>
+            <div class="measurement-card">
+              <div class="measurement-value" id="frequency-value">50.0 Hz</div>
+              <div class="measurement-label">Frecuencia</div>
+            </div>
+            <div class="measurement-card">
+              <div class="measurement-value" id="pf-value">0.92</div>
+              <div class="measurement-label">Factor de Potencia</div>
+            </div>
+            <div class="measurement-card">
+              <div class="measurement-value" id="thd-value">3.2%</div>
+              <div class="measurement-label">THD Voltaje
+<!-- Modal explicativo -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeModal()">&times;</span>
+    <h3>Paso de Conexión</h3>
+    <p id="modal-text">Aquí aparecerá la información de conexión.</p>
   </div>
+</div>
 
-  <div id="info-modal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2 id="modal-title">Título del Modal</h2>
-      <p id="modal-content">Contenido del modal...</p>
-    </div>
-  </div>
+<script>
+  // Cambia entre pestañas
+  function openTab(tabId) {
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    let networkChart;
-    let trafficChart;
-    let analysisInterval;
+    tabs.forEach(tab => tab.classList.remove('active'));
+    contents.forEach(content => content.classList.remove('active'));
 
-    // Datos simulados para el análisis de red eléctrica
-    const electricalData = {
-      tcp: {
-        impedance: [30, 20, 15, 20, 15],
-        labels: ['Resistiva', 'Inductiva', 'Capacitiva', 'Reactiva', 'Pérdidas'],
-        colors: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
-      },
-      udp: {
-        impedance: [40, 15, 10, 25, 10],
-        labels: ['Resistiva', 'Inductiva', 'Capacitiva', 'Reactiva', 'Pérdidas'],
-        colors: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
-      },
-      icmp: {
-        impedance: [35, 25, 5, 25, 10],
-        labels: ['Resistiva', 'Inductiva', 'Capacitiva', 'Reactiva', 'Pérdidas'],
-        colors: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
-      },
-      all: {
-        impedance: [25, 25, 15, 25, 10],
-        labels: ['Resistiva', 'Inductiva', 'Capacitiva', 'Reactiva', 'Pérdidas'],
-        colors: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
-      }
+    document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  // Muestra información de los botones
+  function showStep(text) {
+    document.getElementById('infoBox').innerText = text;
+  }
+
+  // Muestra modal de conexión
+  function openModal(step) {
+    const descriptions = {
+      1: "Conecta las pinzas de corriente en las fases L1, L2 y L3 correctamente orientadas.",
+      2: "Asegura la conexión del neutro (N) si está presente en el sistema.",
+      3: "Conecta los cables de tensión en los bornes correspondientes.",
+      4: "Verifica que la polaridad de las pinzas coincida con la dirección de la corriente.",
+      5: "Activa el equipo para verificar si hay conexión trifásica o monofásica.",
+      6: "Revisa el diagrama para asegurar que no haya inversión de fases.",
+      7: "Verifica tierra si es necesario para medir voltaje de línea a tierra."
     };
 
-    function generateRandomData(range) {
-      const [min, max] = range.split('-').map(Number);
-      const data = [];
-      for (let i=0; i<10; i++) {
-        data.push(Math.floor(Math.random() * (max - min + 1)) + min);
-      }
-      return data;
+    document.getElementById('modal-text').innerText = descriptions[step] || "Paso no disponible.";
+    document.getElementById('modal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+  }
+
+  // Simulación de ondas seno y actualización de valores
+  function generateWaveData(freq, amp, phase, samples = 100, width = 500, height = 150) {
+    const path = [];
+    for (let i = 0; i < samples; i++) {
+      const x = (i / samples) * width;
+      const y = (height / 2) - amp * Math.sin((2 * Math.PI * freq * i / samples) + phase);
+      path.push(`${i === 0 ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`);
     }
+    return path.join(' ');
+  }
 
-    function updateChart(ipRange, portRange) {
-      const ctx = document.getElementById('network-graph').getContext('2d');
-      const ipData = generateRandomData(ipRange || '1-100');
-      const portData = generateRandomData(portRange || '1-1000');
-      
-      if (networkChart) networkChart.destroy();
-      
-      networkChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: Array.from({length: 10}, (_, i) => `Punto ${i+1}`),
-          datasets: [
-            { label: 'IP', data: ipData, borderColor: 'teal' },
-            { label: 'Puertos', data: portData, borderColor: 'crimson' }
-          ]
-        },
-        options: {
-          responsive: true,
-          plugins: { title: { display: true, text: 'Análisis de Red' } }
-        }
-      });
-    }
+  function updateSimulation() {
+    // Simular valores aleatorios
+    const voltage = (220 + Math.random() * 20).toFixed(1);
+    const current = (10 + Math.random() * 5).toFixed(1);
+    const power = ((voltage * current * 0.85) / 1000).toFixed(1);
+    const freq = (49.8 + Math.random() * 0.4).toFixed(1);
+    const pf = (0.85 + Math.random() * 0.1).toFixed(2);
+    const thd = (2 + Math.random() * 3).toFixed(1);
 
-    function updateTrafficChart(protocol) {
-      const ctx = document.getElementById('traffic-chart').getContext('2d');
-      const data = electricalData[protocol] || electricalData.all;
-      
-      if (trafficChart) trafficChart.destroy();
-      
-      trafficChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: data.labels,
-          datasets: [{
-            data: data.impedance,
-            backgroundColor: data.colors,
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: 'Distribución de Impedancia (' + protocol.toUpperCase() + ')',
-              font: { size: 16 }
-            },
-            legend: { position: 'right' }
-          }
-        }
-      });
-      
-      // Actualizar valores estadísticos basados en el protocolo
-      document.getElementById('impedance-value').textContent = 
-        (50 + Math.floor(Math.random() * 20) - 10) + ' Ω';
-      document.getElementById('roe-value').textContent = 
-        (1 + Math.random() * 0.5).toFixed(1) + ':1';
-      document.getElementById('return-loss-value').textContent = 
-        (-10 - Math.random() * 10).toFixed(1) + ' dB';
-    }
+    document.getElementById('voltage-value').innerText = `${voltage} V`;
+    document.getElementById('current-value').innerText = `${current} A`;
+    document.getElementById('power-value').innerText = `${power} kW`;
+    document.getElementById('frequency-value').innerText = `${freq} Hz`;
+    document.getElementById('pf-value').innerText = pf;
+    document.getElementById('thd-value').innerText = `${thd}%`;
 
-    function startRealTimeAnalysis() {
-      const ipRange = document.getElementById('ip-range').value || '1-100';
-      const portRange = document.getElementById('port-range').value || '1-1000';
-      const protocol = document.getElementById('protocol').value;
-      
-      updateChart(ipRange, portRange);
-      updateTrafficChart(protocol);
-      
-      analysisInterval = setInterval(() => {
-        updateChart(ipRange, portRange);
-        updateTrafficChart(protocol);
-      }, 3000);
-    }
+    // Dibujar ondas
+    const vWave = generateWaveData(2, 40, 0);
+    const cWave = generateWaveData(2, 30, Math.PI / 3); // desfase para simular FP
 
-    function stopAnalysis() {
-      if (analysisInterval) clearInterval(analysisInterval);
-    }
+    document.getElementById('voltage-wave').setAttribute('d', vWave);
+    document.getElementById('current-wave').setAttribute('d', cWave);
+  }
 
-    function showButtonInfo(title, content) {
-      document.getElementById('modal-title').textContent = title;
-      document.getElementById('modal-content').innerHTML = content;
-      document.getElementById('info-modal').style.display = 'block';
-    }
-
-    function toggleDropdown() {
-      const dropdown = document.getElementById('analyzer-dropdown');
-      dropdown.classList.toggle('show');
-    }
-
-    function showTab(tabId) {
-      // Ocultar todas las pestañas
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      
-      // Mostrar la pestaña seleccionada
-      document.getElementById(tabId).classList.add('active');
-      
-      // Actualizar navegación activa
-      document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.remove('active');
-      });
-      document.getElementById(tabId + '-nav').classList.add('active');
-      
-      // Si es la pestaña de tráfico, actualizar el gráfico
-      if (tabId === 'traffic-tab') {
-        const protocol = document.getElementById('protocol').value;
-        updateTrafficChart(protocol);
-      }
-      
-      // Si es el dashboard, actualizar el gráfico de red
-      if (tabId === 'dashboard-tab') {
-        updateChart('1-100', '1-1000');
-      }
-    }
-
-    function showInstructivo() {
-      // Ocultar todo primero
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      
-      // Mostrar analyzer en vista completa
-      document.getElementById('full-analyzer').classList.add('show');
-      document.querySelector('.full-conexion').style.display = 'none';
-      
-      // Ocultar elementos del dashboard
-      document.querySelector('.control-panel').style.display = 'none';
-      document.querySelector('.dashboard-grid').style.display = 'none';
-    }
-
-    function showConexion() {
-      // Ocultar todo primero
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      
-      // Mostrar conexion en vista completa
-      document.getElementById('full-analyzer-conexion').classList.add('show');
-
-      // Ocultar elementos del dashboard
-       document.querySelector('full-analyzer').style.display = 'none';
-      document.querySelector('.control-panel').style.display = 'none';
-      document.querySelector('.dashboard-grid').style.display = 'none';
-    }
-
-    // Event listeners
-    document.getElementById('start-analysis').addEventListener('click', startRealTimeAnalysis);
-    document.getElementById('stop-analysis').addEventListener('click', stopAnalysis);
-    
-    // Navegación principal
-    document.getElementById('dashboard-nav').addEventListener('click', () => showTab('dashboard-tab'));
-    document.getElementById('traffic-nav').addEventListener('click', () => showTab('traffic-tab'));
-    document.getElementById('analyzer-main-nav').addEventListener('click', toggleDropdown);
-    
-    // Menú desplegable del analizador
-    document.getElementById('instructivo-nav').addEventListener('click', showInstructivo);
-    document.getElementById('conexion-nav').addEventListener('click', showConexion);
-    document.getElementById('simulador-nav').addEventListener('click', () => showTab('analyzer-container'));
-
-    // Cambios en los parámetros
-    document.getElementById('protocol').addEventListener('change', function() {
-      if (document.getElementById('traffic-tab').classList.contains('active')) {
-        updateTrafficChart(this.value);
-      }
-    });
-
-    document.querySelector('.close').addEventListener('click', () => {
-      document.getElementById('info-modal').style.display = 'none';
-    });
-    
-    window.addEventListener('click', (e) => {
-      if (e.target === document.getElementById('info-modal')) {
-        document.getElementById('info-modal').style.display = 'none';
-      }
-      
-      // Cerrar dropdown si se hace clic fuera
-      if (!e.target.matches('#analyzer-main-nav') && !e.target.matches('#analyzer-dropdown') && !e.target.matches('.dropdown-item')) {
-        const dropdown = document.getElementById('analyzer-dropdown');
-        if (dropdown.classList.contains('show')) {
-          dropdown.classList.remove('show');
-        }
-      }
-    });
-
-    // Inicialización
-    window.addEventListener('DOMContentLoaded', () => {
-      updateChart('1-100','1-1000');
-      showTab('dashboard-tab');
-    });
-  </script>
+  // Iniciar simulación al cargar
+  setInterval(updateSimulation, 2000);
+  updateSimulation(); // inicial
+</script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
